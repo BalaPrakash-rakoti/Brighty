@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Happy Birthday Brightyy 🎉</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Courgette&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Courgette', cursive;
+}
+
+body {
+  overflow: hidden;
+}
+
+/* COMMON */
+.scene {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  transition: opacity 2s;
+}
+
+.scene.active {
+  display: flex;
+}
+
+/* TEXT */
+.message {
+  font-size: 2.5rem;
+  text-align: center;
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+}
+
+.message.fade-out {
+  opacity: 0;
+}
+
+.message.fade-in {
+  opacity: 1;
+}
+
+/* BUTTONS */
+.btn {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  font-size: 3rem;
+  border: none;
+  cursor: pointer;
+  margin-top: 3rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {transform: scale(1)}
+  50% {transform: scale(1.1)}
+  100% {transform: scale(1)}
+}
+
+.instruction {
+  font-size: 1.8rem;
+  margin-top: 1rem;
+}
+
+/* SCENE 1 */
+#scene1 {
+  background: #000;
+  color: white;
+}
+
+/* SCENE 2 - Empty Room */
+#scene2 {
+  background: url('EmptyRoom.png') center/cover no-repeat;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+/* SCENE 3 - Scary Street */
+#scene3 {
+  background: url('ScaryStreet.jpg') center/cover no-repeat;
+  color: #fff;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
+}
+
+/* SCENE 4 - Decorated Room */
+#scene4 {
+  background: url('GiftOnBed.png') center/cover no-repeat;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+}
+
+/* SCENE 5 - Not Enough Message */
+#scene5 {
+  background: url('DecoratedRoom.png') center/cover no-repeat;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+}
+
+/* SCENE 6 - Decorated Lights */
+#scene6 {
+  background: url('DecrotedLights.png') center/cover no-repeat;
+  position: relative;
+}
+
+/* SCENE 7 - Final Birthday */
+#scene7 {       
+  background: url('GiftOnBed.png') center/cover no-repeat;
+}
+
+.lights-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.light-bulb {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  animation: twinkle 2s infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% {opacity: 0.5; transform: scale(1);}
+  50% {opacity: 1; transform: scale(1.2);}
+}
+
+/* GIFT */
+#gift {
+  width: 20rem;
+  animation: float 3s infinite ease-in-out;
+  cursor: pointer;
+}
+
+@keyframes float {
+  0% {transform: translateY(0)}
+  50% {transform: translateY(-10px)}
+  100% {transform: translateY(0)}
+}
+
+.gift-btn {
+  padding: 1.5rem 3rem;
+  font-size: 2rem;
+  background: linear-gradient(135deg, #ffd700, #ff6b6b);
+  border: none;
+  border-radius: 50px;
+  color: white;
+  cursor: pointer;
+  animation: pulse 2s infinite;
+  box-shadow: 0 10px 30px rgba(255,107,107,0.5);
+  transition: transform 0.3s;
+}
+
+.gift-btn:hover {
+  transform: scale(1.1);
+}
+</style>
+</head>
+
+<body>
+
+<!-- AUDIO -->
+<audio id="switchSound" src="switch.mp3" preload="auto"></audio>
+<audio id="doorSound" src="door.mp3" preload="auto"></audio>
+<audio id="bgm" src="haunt-bgm.mp3" loop preload="auto"></audio>
+<audio id="blast" src="blast.mp3" preload="auto"></audio>
+
+<!-- SCENE 1 -->
+<div id="scene1" class="scene active">
+  <div id="s1msg" class="message"></div>
+  <button id="lightBtn" class="btn" style="display:none;background:#5cca8d;">💡</button>
+  <div id="lightText" class="instruction" style="display:none;color:#ffffff;">
+    Click on the bulb to light 
+  </div>
+</div>
+
+<!-- SCENE 2 - Empty Room -->
+<div id="scene2" class="scene">
+  <div id="s2msg" class="message" style="color:#ffffff;"></div>
+  <button id="doorBtn" class="btn" style="display:none;background:#5cca8d;">🚪</button>
+  <div class="instruction" id="doorText" style="display:none;color:#ffffff;">
+    Click the Door
+  </div>
+</div>
+
+<!-- SCENE 3 - Scary Street -->
+<div id="scene3" class="scene">
+  <div id="s3msg" class="message"></div>
+  <button id="forwardBtn" class="btn" style="display:none;background:#5cca8d;color:white;">🏃🚪</button>
+  <div class="instruction" id="forwardText" style="display:none;color:#ffffff;">
+    Let's go inside
+  </div>
+</div>
+
+<!-- SCENE 4 - Decorated Room -->
+<div id="scene4" class="scene">
+  <div id="s4msg" class="message" style="color:white;"></div>
+  <button id="nextBtn" class="btn" style="display:none;background:#5cca8d;">🎉</button>
+  <div class="instruction" id="nextText" style="display:none;color:#ffffff;">
+    Decorate Room
+  </div>
+</div> 
+
+<!-- SCENE 5 - Not Enough Message -->
+<div id="scene5" class="scene">
+  <div id="s5msg" class="message" style="color:white;"></div>
+  <button id="lightsBtn" class="btn" style="display:none;background:#5cca8d;">🔌</button>
+  <div class="instruction" id="lightsText" style="display:none;color:#ffffff;">
+    Decorate With Lights
+  </div>
+</div> 
+
+<!-- SCENE 6 - Decorated Lights & Gift -->
+<div id="scene6" class="scene">
+  <div class="lights-decoration" id="lightsContainer"></div>
+  <div class="message" style="font-size:3rem;color:white;text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">
+    🎉 Surprise for You! 🎉
+  </div>
+  <button class="gift-btn" id="openGiftBtn">🎁 Open Gift</button>
+</div>
+
+<!-- SCENE 7 - Final Birthday Message -->
+<div id="scene7" class="scene">
+    <!--
+  <div class="message" style="font-size:3rem;color:white;">
+    🎂 Happy Birthday Brightyy 🎉
+  </div> -->
+  <a href="index1.html">Go to Page 2</a> 
+</div>
+
+<script>
+// Preload and prepare all audio elements
+window.addEventListener('DOMContentLoaded', () => {
+  const allAudio = [
+    document.getElementById('switchSound'),
+    document.getElementById('doorSound'),
+    document.getElementById('bgm'),
+    document.getElementById('blast')
+  ];
+  
+  // Load all audio files immediately
+  allAudio.forEach(audio => {
+    if (audio) {
+      audio.load();
+      audio.volume = 1.0;
+    }
+  });
+});
+
+const scenes = document.querySelectorAll('.scene');
+
+function showScene(id) {
+  scenes.forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* SCENE 1 TEXT */
+const s1Texts = [
+  "Hey...",
+  "I know you're excited today...",
+  "But it's quite dark in here...",  
+  "Switch on the light to see more!"
+];
+
+// Use a shared fade duration to sync with CSS (matches 1s CSS transition)
+const FADE_MS = 1000;
+
+let i = 0;
+const s1msg = document.getElementById('s1msg');
+// Show the first message immediately
+s1msg.textContent = s1Texts[0];
+s1msg.classList.add('fade-in');
+i = 1;
+const interval1 = setInterval(() => {
+  s1msg.classList.remove('fade-in');
+  s1msg.classList.add('fade-out');
+  setTimeout(() => {
+    s1msg.textContent = s1Texts[i];
+    s1msg.classList.remove('fade-out');
+    s1msg.classList.add('fade-in');
+    i++;
+    if (i === s1Texts.length) {
+      clearInterval(interval1);
+      setTimeout(() => {
+        lightBtn.style.display = 'block';
+        lightText.style.display = 'block';
+      }, 1500);
+    }
+  }, FADE_MS);
+  }, 5000);
+
+/* LIGHT */
+lightBtn.onclick = () => {
+  switchSound.play();
+  showScene('scene2');
+  startScene2();
+};
+
+/* SCENE 2 - Empty Room */
+function startScene2() {
+  const msgs = [
+    "Lights are on... but the room is empty?",
+    "That's strange, Where is everyone?",
+    "Maybe they're outside?",
+    "Let's check outside..."
+  ];
+  let j = 0;
+  const s2msg = document.getElementById('s2msg');
+  // Show first message immediately
+  s2msg.textContent = msgs[0];
+  s2msg.classList.add('fade-in');
+  j = 1;
+  const int2 = setInterval(() => {
+    s2msg.classList.remove('fade-in');
+    s2msg.classList.add('fade-out');
+    setTimeout(() => {
+      s2msg.textContent = msgs[j];
+      s2msg.classList.remove('fade-out');
+      s2msg.classList.add('fade-in');
+      j++;
+      if (j === msgs.length) {
+        clearInterval(int2);
+        setTimeout(() => {
+          doorBtn.style.display = 'block';
+          doorText.style.display = 'block';
+        }, 1200);
+      }
+    }, FADE_MS);
+    }, 5000);
+}
+
+doorBtn.onclick = () => {
+  doorSound.play();
+  showScene('scene3');
+  startScene3();
+};
+
+/* SCENE 3 - Scary Street */
+function startScene3() {
+  const msgs = [
+    "Oh... i think it's too late...",
+    "It's look like scary and dark...",
+    "But I hear something ahead...",
+    "Shall we go back to the room..."
+  ];
+  
+  // Start BGM after 3 seconds with fade-in effect
+  setTimeout(() => {
+    const bgmAudio = document.getElementById('bgm');
+    bgmAudio.volume = 0;
+    bgmAudio.play();
+    
+    // Fade in the volume over 2 seconds to 0.4 (lower volume)
+    let volume = 0;
+    const fadeIn = setInterval(() => {
+      if (volume < 0.4) {
+        volume += 0.02;
+        bgmAudio.volume = Math.min(volume, 0.4);
+      } else {
+        clearInterval(fadeIn);
+      }
+    }, 100);
+  }, 3000);
+  
+  let k = 0;
+  const s3msg = document.getElementById('s3msg');
+  // Show first message immediately
+  s3msg.textContent = msgs[0];
+  s3msg.classList.add('fade-in');
+  k = 1;
+  const int3 = setInterval(() => {
+    s3msg.classList.remove('fade-in');
+    s3msg.classList.add('fade-out');
+    setTimeout(() => {
+      s3msg.textContent = msgs[k];
+      s3msg.classList.remove('fade-out');
+      s3msg.classList.add('fade-in');
+      k++;
+      if (k === msgs.length) {
+        clearInterval(int3);
+        setTimeout(() => {
+          forwardBtn.style.display = 'block';
+          forwardText.style.display = 'block';
+        }, 1200);
+      }
+    }, FADE_MS);
+    }, 4500);
+}
+
+forwardBtn.onclick = () => {
+  bgm.pause();
+  doorSound.play();
+  showScene('scene4');
+  startScene4();
+};
+
+/* SCENE 4 - Decorated Room */
+function startScene4() {
+  const msgs = [
+    "Hey look...",
+    "Something on your bed",
+    "Close your eyes..."
+  ];
+  let m = 0;
+  const s4msg = document.getElementById('s4msg');
+  // Show first message immediately
+  s4msg.textContent = msgs[0];
+  s4msg.classList.add('fade-in');
+  m = 1;
+  const int4 = setInterval(() => {
+    s4msg.classList.remove('fade-in');
+    s4msg.classList.add('fade-out');
+    setTimeout(() => {
+      s4msg.textContent = msgs[m];
+      s4msg.classList.remove('fade-out');
+      s4msg.classList.add('fade-in');
+      m++;
+      if (m === msgs.length) {
+        clearInterval(int4);
+        setTimeout(() => {
+          nextBtn.style.display = 'block';
+          nextText.style.display = 'block';
+        }, 1200);
+      }
+    }, FADE_MS);
+    }, 4300);
+}
+
+nextBtn.onclick = () => {
+  showScene('scene5');
+  startScene5();
+};
+
+/* SCENE 5 - Not Enough Message */
+function startScene5() {
+  const msgs = [
+    "Wow! Room is decorated",
+    "This looks beautiful!",
+    "Hmm... but it's not enough",
+    "Something is missing...",
+    "We can add lights in the room!",
+    "That will make it perfect!"
+  ];
+  let n = 0;
+  const s5msg = document.getElementById('s5msg');
+  // Show first message immediately
+  s5msg.textContent = msgs[0];
+  s5msg.classList.add('fade-in');
+  n = 1;
+  const int5 = setInterval(() => {
+    s5msg.classList.remove('fade-in');
+    s5msg.classList.add('fade-out');
+    setTimeout(() => {
+      s5msg.textContent = msgs[n];
+      s5msg.classList.remove('fade-out');
+      s5msg.classList.add('fade-in');
+      n++;
+      if (n === msgs.length) {
+        clearInterval(int5);
+        setTimeout(() => {
+          lightsBtn.style.display = 'block';
+          lightsText.style.display = 'block';
+        }, 1200);
+      }
+    }, FADE_MS);
+    }, 4300);
+} 
+
+lightsBtn.onclick = () => {
+  blast.play();
+  showScene('scene6');
+  createLights();
+};
+
+/* SCENE 6 - Create Decorative Lights */
+function createLights() {
+  const container = document.getElementById('lightsContainer');
+  const colors = ['#ffd700', '#ff6b6b', '#4ecdc4', '#45b7d1', '#f38181', '#a29bfe', '#fd79a8'];
+  
+  for (let i = 0; i < 30; i++) {
+    const light = document.createElement('div');
+    light.className = 'light-bulb';
+    light.style.left = Math.random() * 100 + '%';
+    light.style.top = Math.random() * 100 + '%';
+    light.style.background = colors[Math.floor(Math.random() * colors.length)];
+    light.style.animationDelay = Math.random() * 2 + 's';
+    light.style.boxShadow = `0 0 20px ${colors[Math.floor(Math.random() * colors.length)]}`;
+    container.appendChild(light);
+  }
+}
+
+/* GIFT BUTTON */
+openGiftBtn.onclick = () => {
+  window.location.href = 'index1.html';
+};
+</script>
+
+</body>
+</html>
